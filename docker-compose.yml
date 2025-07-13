@@ -1,0 +1,10 @@
+version: '3.8'
+
+services:
+  telegram-bot:
+    build: .
+    container_name: lumino_bot
+    restart: unless-stopped
+    env_file:
+      - config.env
+    command: python main.py

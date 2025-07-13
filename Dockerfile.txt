@@ -1,0 +1,19 @@
+FROM python:3.11-slim
+# Add this line
+ENV PYTHONUNBUFFERED=1  
+
+
+WORKDIR /app
+
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY main.py .
+COPY config.env .
+
+# Export config.env as environment variables
+RUN echo 'source config.env' >> ~/.bashrc
+ENV $(cat config.env | xargs)
+
+CMD ["python", "-u", "main.py"]
