@@ -28,7 +28,12 @@ def is_admin(user_id):
 # ─── Format for /show ───
 def format_user_block(user, login_data, include_keyboard=True):
     uid = user["id"]
-    name = user.get("name", "(no name)")
+    name = (
+        user.get("name")
+        or (login_data and login_data[0].get("name"))
+        or (login_data and login_data[0].get("full_name"))
+        or "(no name)"
+    )
     approved = user.get("is_approved", False)
     created = login_data[0]["created_at"] if login_data else "(unknown)"
     email = login_data[0]["email"] if login_data else "(no email)"
@@ -194,7 +199,12 @@ async def check_new_logins(app):
                 profile = supabase.table("users_profile").select("*").eq("id", uid).execute().data
                 p = profile[0] if profile else {}
                 approved = p.get("is_approved", False)
-                name = p.get("name", "(no name)")
+                name = (
+                    p.get("name")
+                    or user.get("name")
+                    or user.get("full_name")
+                    or "(no name)"
+                )
                 msg = (
                     "🆕 New User Logged In\n\n"
                     f"🧑 Name: {name}\n"
